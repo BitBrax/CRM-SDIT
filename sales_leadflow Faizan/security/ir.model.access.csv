@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+view_lead_flow,lead.flow,model_lead_flow,base.group_user,1,1,1,1
+view_lead_campaign,lead.campaign,model_lead_campaign,base.group_user,1,1,1,1
+view_regularized_branch,regularized.branch,model_regularized_branch,base.group_user,1,1,1,1
+view_activity_lead,activity.lead,model_activity_lead,base.group_user,1,1,1,1
+view_do_activity,do.activity,model_do_activity,base.group_user,1,1,1,1
+view_activity_schedule,activity.schedule,model_activity_schedule,base.group_user,1,1,1,1
+view_activity_staff,activity.staff,model_activity_staff,base.group_user,1,1,1,1

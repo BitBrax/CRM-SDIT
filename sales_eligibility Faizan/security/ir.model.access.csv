@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_criteria,sale.criteria,model_sale_criteria,,1,1,1,1
+access_criteria_lines,criteria.lines,model_criteria_lines,,1,1,1,1
+access_sale_pool,sale.pool,model_sale_pool,,1,1,1,1
+access_sale_competition,sale.competition,model_sale_competition,,1,1,1,1
+access_competition_lines,competition.lines,model_competition_lines,,1,1,1,1
+access_sales_kpi,sales.kpi,model_sales_kpi,,1,1,1,1
+access_target_kpi,target.kpi,model_target_kpi,,1,1,1,1
+access_sale_target_appraisal,sale.target.appraisal,model_sale_target_appraisal,,1,1,1,1
+access_appraisal_report_lines,appraisal.report.lines,model_appraisal_report_lines,,1,1,1,1
+access_achievement_target_line,achievement.target.line,model_achievement_target_line,,1,1,1,1

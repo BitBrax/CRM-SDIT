@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_saletarget_saletarget,saletarget.saletarget,model_saletarget_saletarget,,1,1,1,1
+access_targetline_targetline,targetline.targetline,model_targetline_targetline,,1,1,1,1
+access_targetline_history,targetline.history,model_targetline_history,,1,1,1,1
+access_saletarget_config,saletarget.config,model_saletarget_config,,1,1,1,1
+access_product_sales,product.sales,model_product_sales,,1,1,1,1
+access_saletarget_batch,saletarget.batch,model_saletarget_batch,,1,1,1,1
+access_saletaget_batch_salesperson,saletaget.batch.salesperson,model_saletaget_batch_salesperson,,1,1,1,1

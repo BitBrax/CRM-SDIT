@@ -1,0 +1,369 @@
+<odoo>
+    <data>
+
+        <record id="lead_flow_form_view" model="ir.ui.view">
+            <field name="name">lead_flow_form_view</field>
+            <field name="model">lead.flow</field>
+            <field name="arch" type="xml">
+                <form string="Lead Flow">
+                    <header>
+                        <button name="button_confirm" string="Confirm" class="oe_highlight" type="object" states="draft"/>
+                        <button name="button_reset" string="Reset"  type="object" states="confirm" groups="sales_eligibility.group_reporting_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="staff_id" options="{'no_create': True}" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="campaign_id" options="{'no_create': True}" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="product_id" options="{'no_create': True}" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="new_lead" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="pending" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="contacted" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="pending_docs" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="submitted" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="call_back" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="closing" attrs="{'readonly':[('state','=','confirm')]}"/>
+                            </group>
+                            <group>
+                                <field name="failed" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="not_contactable" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="not_eligible" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="not_interested" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="rejected" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="regularized" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="reactivating_base_no" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="regularized_in_branch_id" options="{'no_create': True}" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="done_percentage" string="Done(%)" widget="progressbar"/>
+                                <field name="failed_percentage" string="Failed(%)" widget="progressbar"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="lead_flow_tree_view" model="ir.ui.view">
+            <field name="name">lead.flow.tree.view</field>
+            <field name="model">lead.flow</field>
+            <field name="arch" type="xml">
+                <tree string="Lead Flow">
+                    <field name="date"/>
+                    <field name="staff_id" />
+                    <field name="product_id" />
+                    <field name="campaign_id" />
+                    <field name="new_lead" />
+                    <field name="pending" />
+                    <field name="contacted" />
+                    <field name="pending_docs" />
+                    <field name="submitted" />
+                    <field name="call_back" />
+                    <field name="closing" />
+                    <field name="failed" />
+                    <field name="not_contactable" />
+                    <field name="not_eligible" />
+                    <field name="not_interested" />
+                    <field name="rejected" />
+                    <field name="regularized" />
+                    <field name="reactivating_base_no" />
+                    <field name="regularized_in_branch_id" />
+                    <field name="done_percentage" string="Done(%)" widget="progressbar"/>
+                    <field name="failed_percentage" string="Failed(%)" widget="progressbar"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="lead_flow_action" model="ir.actions.act_window">
+            <field name="name">Lead Flow</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lead.flow</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_sales_lead_flow_filter" model="ir.ui.view">
+            <field name="name">sale.lead.flow.filters</field>
+            <field name="model">lead.flow</field>
+            <field name="priority" eval="15"/>
+            <field name="arch" type="xml">
+                <search string="Search Lead Flow">
+                    <field name="staff_id" string="Staff" />
+                    <field name="product_id" />
+                    <field name="campaign_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Staff" name="staff_id" domain="[]" context="{'group_by': 'staff_id'}"/>
+                        <filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}"/>
+                        <filter string="Date" name="date" domain="[]" context="{'group_by': 'date'}"/>
+                        <filter string="Status" name="state" domain="[]" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <menuitem id="menu_lead_flow" name="Lead Flow" action="lead_flow_action" parent="sale.sale_order_menu" sequence="80"/>
+
+        <!-- Campaign view -->
+
+        <record id="campaign_form_view" model="ir.ui.view">
+            <field name="name">campaign_form_view</field>
+            <field name="model">lead.campaign</field>
+            <field name="arch" type="xml">
+                <form string="Campaign">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="campaign_tree_view" model="ir.ui.view">
+            <field name="name">campaign.tree.view</field>
+            <field name="model">lead.campaign</field>
+            <field name="arch" type="xml">
+                <tree string="Campaign">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="campaign_action" model="ir.actions.act_window">
+            <field name="name">Campaign</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lead.campaign</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_campaign" name="Campaign" action="campaign_action" parent="sale.menu_sale_config" sequence="70"/>
+
+        <!--Branch view -->
+
+        <record id="branch_form_view" model="ir.ui.view">
+            <field name="name">branch_form_view</field>
+            <field name="model">regularized.branch</field>
+            <field name="arch" type="xml">
+                <form string="Regularized Branch">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="country_id"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="branch_tree_view" model="ir.ui.view">
+            <field name="name">branch.tree.view</field>
+            <field name="model">regularized.branch</field>
+            <field name="arch" type="xml">
+                <tree string="Campaign">
+                    <field name="name"/>
+                    <field name="country_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="branch_action" model="ir.actions.act_window">
+            <field name="name">Regularized Branch</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">regularized.branch</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_regularized_branch" name="Regularized Branch" action="branch_action" parent="sale.menu_sale_config" sequence="75"/>
+
+        <!--Activity type view -->
+
+        <record id="activity_do_form_view" model="ir.ui.view">
+            <field name="name">do_activity_form_view</field>
+            <field name="model">do.activity</field>
+            <field name="arch" type="xml">
+                <form string="Activity Type">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="description" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="activity_do_tree_view" model="ir.ui.view">
+            <field name="name">do.activity.tree.view</field>
+            <field name="model">do.activity</field>
+            <field name="arch" type="xml">
+                <tree string="Activity Type">
+                    <field name="name"/>
+                    <field name="description" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="activity_type_action" model="ir.actions.act_window">
+            <field name="name">Activity Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">do.activity</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_activity_type" name="Activity Types" action="activity_type_action" parent="sale.menu_sale_config" sequence="90"/>
+
+        <!--Activity view -->
+
+        <record id="activity_form_view" model="ir.ui.view">
+            <field name="name">activity_flow_form_view</field>
+            <field name="model">activity.lead</field>
+            <field name="arch" type="xml">
+                <form string="Activity">
+                    <header>
+                        <button name="button_confirm" string="Confirm" class="oe_highlight" type="object" states="draft"/>
+                        <button name="button_reset" string="Reset"  type="object" states="confirm" groups="sales_eligibility.group_reporting_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="activity_tye_id" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="aasign_to" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="assigned_date" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="due_date" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                            </group>
+                            <group>
+                                <field name="target" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="achieved" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                                <field name="note" required="1" attrs="{'readonly':[('state','=','confirm')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="activity_lead_tree_view" model="ir.ui.view">
+            <field name="name">lead.activity.tree.view</field>
+            <field name="model">activity.lead</field>
+            <field name="arch" type="xml">
+                <tree string="Activity">
+                    <field name="activity_tye_id"/>
+                    <field name="assigned_date" />
+                    <field name="aasign_to" />
+                    <field name="due_date" />
+                    <field name="target" />
+                    <field name="achieved" />
+                    <field name="note" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="activity_flow_action" model="ir.actions.act_window">
+            <field name="name">Activity</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">activity.lead</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_activity_lead_flow_filter" model="ir.ui.view">
+            <field name="name">sale.lead.flow.filters</field>
+            <field name="model">activity.lead</field>
+            <field name="priority" eval="15"/>
+            <field name="arch" type="xml">
+                <search string="Activity">
+                    <field name="activity_tye_id" />
+                    <field name="aasign_to" />
+                    <group expand="0" string="Group By">
+                        <filter string="Assign to" name="aasign_to" domain="[]" context="{'group_by': 'aasign_to'}"/>
+                        <filter string="Activity" name="activity_tye_id" domain="[]" context="{'group_by': 'activity_tye_id'}"/>
+                        <filter string="Date" name="assigned_date" domain="[]" context="{'group_by': 'assigned_date'}"/>
+                        <filter string="Status" name="state" domain="[]" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <menuitem id="menu_activity_lead_flow" name="Activities" action="activity_flow_action" parent="sale.sale_order_menu" sequence="90"/>
+
+        <!-- Schedule Activity-->
+
+        <record model="ir.ui.view" id="activity_schedule_form_view">
+            <field name="name">Activity Schedule</field>
+            <field name="model">activity.schedule</field>
+            <field name="arch" type="xml">
+                <form string="Activity Schedule">
+                    <header>
+                        <button name="button_active" string="Active" class="oe_highlight" type="object" states="draft"/>
+                        <button name="button_close" string="Close" class="oe_highlight" type="object" states="active"/>
+                        <button name="button_reset" string="Reset" type="object" states="close" groups="sales_eligibility.group_reporting_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,close"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </h1>
+                        </div>
+                        <separator string="Staff Activity(s)"/>
+                        <field name="activity_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                            <tree editable='bottom'>
+                                <field name="staff_activity_id" invisible="1"/>
+                                <field name="staff_id" string="Staff" />
+                                <field name="activity_type_id"/>
+                                <field name="activity_type"/>
+                                <field name="target"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="activity_schedule_tree_view">
+            <field name="name">Activity Schedule</field>
+            <field name="model">activity.schedule</field>
+            <field name="arch" type="xml">
+                <tree string="Activity Schedule">
+                    <field name="name"/>
+                    <field name="activity_ids" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="activity_schedule_action" model="ir.actions.act_window">
+            <field name="name">Activity Schedule</field>
+            <field name="res_model">activity.schedule</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Activity Schedule" id="menu_activity_schedule_sit" parent="sale.menu_sale_config" action="activity_schedule_action" sequence="100"/>
+
+    </data>
+</odoo>
+
+
+

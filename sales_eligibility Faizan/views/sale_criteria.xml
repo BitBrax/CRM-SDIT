@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="view_employee_sale_target_inh">
+			<field name="name">employee.view.st</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="salesperson_sales_target_app.view_employee_inherit_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//page[@name='saletarget']/field[@name='product_sale_ids']/tree/field[@name='threshold_quantity_monthly']" position="after">
+					<field name="appraisal_quantity" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="model_sale_competition_action_validate" model="ir.actions.server">
+			<field name="name">Redeem Points</field>
+			<field name="model_id" ref="sales_eligibility.model_competition_lines"/>
+			<field name="binding_model_id" ref="sales_eligibility.model_competition_lines"/>
+			<field name="binding_view_types">list</field>
+			<field name="state">code</field>
+			<field name="code">
+				if records:
+				records.check_payout_status()
+			</field>
+		</record>
+
+		<record id="target_kpi_form_view" model="ir.ui.view">
+			<field name="name">target_kpi_form_view</field>
+			<field name="model">target.kpi</field>
+			<field name="arch" type="xml">
+				<form string="KPI">
+					<sheet>
+						<group>
+							<group>
+								<field name="salesperson_id" required="1"/>
+								<field name="month" required="1"/>
+								<field name="quarter" />
+								<field name="year" required="1"/>
+							</group>
+							<group>
+								<field name="kpi_config_id" string="KPI" required="1"/>
+								<field name="target" required="1"/>
+								<field name="submitted" required="1"/>
+								<field name="ratio" widget="progressbar" readonly="1"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="target_kpi_tree_view" model="ir.ui.view">
+			<field name="name">target.kpi.tree.view</field>
+			<field name="model">target.kpi</field>
+			<field name="arch" type="xml">
+				<tree string="KPI">
+					<field name="salesperson_id"/>
+					<field name="month" />
+					<field name="quarter" />
+					<field name="year"/>
+					<field name="kpi_config_id" string="KPI" />
+					<field name="target"/>
+					<field name="submitted"/>
+					<field name="ratio" widget="progressbar" readonly="1"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="target_kpi_action" model="ir.actions.act_window">
+			<field name="name">KPI</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">target.kpi</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="menu_target_kpi" name="KPI" action="target_kpi_action" parent="sale.menu_sale_report" sequence="50"/>
+
+
+		<record id="kpi_form_view" model="ir.ui.view">
+			<field name="name">kpi_form_view</field>
+			<field name="model">sales.kpi</field>
+			<field name="arch" type="xml">
+				<form string="KPI Configuration">
+					<sheet>
+						<group>
+							<group>
+								<field name="name"/>
+								<field name="year"/>
+							</group>
+							<group>
+								<field name="target"/>
+								<field name="submitted"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="kpi_tree_view" model="ir.ui.view">
+			<field name="name">kpi.tree.view</field>
+			<field name="model">sales.kpi</field>
+			<field name="arch" type="xml">
+				<tree string="KPI Configuration">
+					<field name="name"/>
+					<field name="year"/>
+					<field name="target"/>
+					<field name="submitted"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="kpi_action" model="ir.actions.act_window">
+			<field name="name">KPI Configuration</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sales.kpi</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="menu_sales_kpi" name="KPI Configuration" action="kpi_action" parent="sale.menu_sale_config" sequence="50"/>
+
+
+		<!-- Pool view -->
+		<record id="pool_form_view" model="ir.ui.view">
+			<field name="name">pool_form_view</field>
+			<field name="model">sale.pool</field>
+			<field name="arch" type="xml">
+				<form string="Pool">
+					<sheet>
+						<group>
+							<group>
+								<field name="name"/>
+								<label for="percentage_in"/>
+								<div>
+									<field name="percentage_in" class="oe_inline" />%
+									&#160;&#160;-&#160;&#160;
+									<field name="percentage_out" class="oe_inline" />%
+								</div>
+							</group>
+							<group>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="pool_tree_view" model="ir.ui.view">
+			<field name="name">pool.tree.view</field>
+			<field name="model">sale.pool</field>
+			<field name="arch" type="xml">
+				<tree string="Pool">
+					<field name="name"/>
+					<field name="percentage_in" string="Percentage From"/>
+					<field name="percentage_out" string="Percentage To"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="pool_action" model="ir.actions.act_window">
+			<field name="name">Pool</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.pool</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="menu_pool_pool" name="Pools" action="pool_action" parent="sale.menu_sale_config" sequence="45"/>
+
+		<record model="ir.ui.view" id="sale_criteria_form_view">
+			<field name="name">Criteria</field>
+			<field name="model">sale.criteria</field>
+			<field name="arch" type="xml">
+				<form string="Criteria">
+					<header>
+						<button name="button_active" string="Active" class="oe_highlight" type="object" states="draft"/>
+						<button name="button_close" string="Close" class="oe_highlight" type="object" states="active"/>
+						<button name="button_reset" string="Reset" type="object" states="close"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,active,close"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="month" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<label for="start_date" string="Period" />
+								<div class="o_row">
+									<field name="start_date" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - <field name="end_date" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+								</div>
+							</group>
+							<group>
+								<field name="overall_percentage" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="pool_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</group>
+						</group>
+						<field name="product_lines" attrs="{'readonly':[('state','!=','draft')]}">
+							<tree editable='bottom'>
+								<field name="line_ids" invisible="1"/>
+								<field name="product_id" string="Product" />
+								<!--<field name="target_quantity"/>-->
+								<field name="sale_percentage"/>
+							</tree>
+						</field>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="sale_criteria_tree_view">
+			<field name="name">Criteria</field>
+			<field name="model">sale.criteria</field>
+			<field name="arch" type="xml">
+				<tree string="Eligibility Criteria">
+					<field name="name"/>
+					<field name="start_date"/>
+					<field name="end_date"/>
+					<field name="overall_percentage"/>
+					<field name="pool_id"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="sale_criteria_action" model="ir.actions.act_window">
+			<field name="name">Eligibility Criteria</field>
+			<field name="res_model">sale.criteria</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Eligibility Criteria" id="sale_criteria_menu" parent="sale.menu_sale_config" action="sale_criteria_action" sequence="15"/>
+
+		<!-- Competition view -->
+
+		<record model="ir.ui.view" id="sale_competition_form_view">
+			<field name="name">Competition</field>
+			<field name="model">sale.competition</field>
+			<field name="arch" type="xml">
+				<form string="Competition Report">
+					<header>
+						<button name="button_get_report" string="Generate Report" class="oe_highlight" type="object" states="draft"/>
+						<button name="button_confirm" string="Confirm" class="oe_highlight" type="object" states="draft"/>
+						<button name="button_close" string="Close" class="oe_highlight" type="object" states="active"/>
+						<button name="button_reset" string="Reset" type="object" states="close" groups="sales_eligibility.group_reporting_manager"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,active,close"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<field name="name" readonly="1"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<label for="date_start"/>
+								<div>
+									<field name="date_start" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+									&#160;&#160;-&#160;&#160;
+									<field name="date_end" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+								</div>
+								<field name="report_type" string="Report Type" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</group>
+							<group>
+							</group>
+
+						</group>
+						<field name="competition_line_ids" readonly="1">
+							<tree editable='bottom'>
+								<field name="competition_id" invisible="1"/>
+								<field name="date"/>
+								<field name="staff_id"/>
+								<field name="salesperson"/>
+								<field name="staff_job"/>
+								<field name="total_point"/>
+								<!--<field name="achieve_quantity"/>
+								<field name="target_quantity"/>
+								--><field name="overall_percent" string="Overall Ratio"/>
+								<field name="pool_id"/>
+								<field name="no_of_wins"/>
+							</tree>
+						</field>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="sale_competition_tree_view">
+			<field name="name">Competition Report</field>
+			<field name="model">sale.competition</field>
+			<field name="arch" type="xml">
+				<tree string="Competition Report">
+					<field name="name"/>
+					<field name="date_start" string="Start Date"/>
+					<field name="date_end" string="End Date"/>
+					<field name="report_type"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="sale_competition_action" model="ir.actions.act_window">
+			<field name="name">Competition Report</field>
+			<field name="res_model">sale.competition</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Competition Report" id="sale_competition_menu" parent="sale.menu_sale_report" action="sale_competition_action" sequence="10"/>
+
+		<!-- Competition lines view -->
+
+		<record model="ir.ui.view" id="sale_competition_line_form_view">
+			<field name="name">Competition Lines</field>
+			<field name="model">competition.lines</field>
+			<field name="arch" type="xml">
+				<form string="Competition Lines">
+					<header>
+						<field name="payout_status" widget="statusbar" statusbar_visible="passed,failed"/>
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="date"/>
+								<field name="staff_id"/>
+								<field name="salesperson"/>
+								<field name="staff_job"/>
+							</group>
+							<group>
+								<!--<field name="achieve_quantity"/>
+								<field name="target_quantity"/>-->
+								<field name="total_point"/>
+								<field name="overall_percent" string="Overall Ratio"/>
+								<field name="pool_id"/>
+								<field name="no_of_wins"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="sale_competition_line_tree_view">
+			<field name="name">Competition Lines</field>
+			<field name="model">competition.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Competition Lines">
+					<field name="date"/>
+					<field name="staff_id"/>
+					<field name="salesperson"/>
+					<field name="staff_job"/>
+					<!--	<field name="achieve_quantity"/>
+                        <field name="target_quantity"/>-->
+					<field name="total_point"/>
+					<field name="overall_percent" string="Overall Ration"/>
+					<field name="pool_id"/>
+					<field name="no_of_wins"/>
+					<field name="payout_status" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="sale_competition_line_action" model="ir.actions.act_window">
+			<field name="name">Competition Lines Report</field>
+			<field name="res_model">competition.lines</field>
+			<field name="view_mode">tree,form</field>
+
+		</record>
+
+		<record id="view_competition_line_filter" model="ir.ui.view">
+			<field name="name">line.competition.filters</field>
+			<field name="model">competition.lines</field>
+			<field name="priority" eval="15"/>
+			<field name="arch" type="xml">
+				<search string="Search Competition Lines">
+					<field name="staff_id" string="Staff ID" />
+					<field name="salesperson" string="Staff Name" />
+					<group expand="0" string="Group By">
+						<filter string="Staff" name="salesperson" domain="[]" context="{'group_by': 'salesperson'}"/>
+						<filter string="Date" name="date" domain="[]" context="{'group_by': 'date'}"/>
+						<filter string="Pool" name="pool_id" domain="[]" context="{'group_by': 'pool_id'}"/>
+						<filter string="Payout Status" name="payout_status" domain="[]" context="{'group_by': 'payout_status'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<menuitem name="Competition Report Lines" id="sale_competition_line_menu" parent="sale.menu_sale_report" action="sale_competition_line_action" sequence="20"/>
+
+		<record model="ir.ui.view" id="view_target_achievement_form">
+			<field name="name">Target/Achievement form</field>
+			<field name="model">achievement.target.line</field>
+			<field name="arch" type="xml">
+				<form string="Appraisal vs Booked">
+					<field name="product_id" />
+					<field name="target_qty" string="Appraisal Target"/>
+					<field name="achievement_qty" string="Booked Quantity"/>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_target_achievement_tree">
+			<field name="name">Target/Achievement tree</field>
+			<field name="model">achievement.target.line</field>
+			<field name="arch" type="xml">
+				<tree string="Appraisal vs Booked">
+					<field name="product_id" />
+					<field name="target_qty" string="Appraisal Target"/>
+					<field name="achievement_qty" string="Booked Quantity"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_target_achievement_filter" model="ir.ui.view">
+			<field name="name">filter.target.achievement</field>
+			<field name="model">achievement.target.line</field>
+			<field name="priority" eval="15"/>
+			<field name="arch" type="xml">
+				<search string="Appraisal vs Booked">
+					<field name="product_id" string="Product ID" />
+					<group expand="0" string="Group By">
+						<filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+		<!--Appraisal Report-->
+
+		<record model="ir.ui.view" id="sale_appraisal_report_form_view">
+			<field name="name">Appraisal Report</field>
+			<field name="model">sale.target.appraisal</field>
+			<field name="arch" type="xml">
+				<form string="Appraisal Report">
+					<header>
+						<button name="button_generate" string="Generate Report" class="oe_highlight" type="object" states="draft"/>
+						<button name="button_confirm" string="Confirm" class="oe_highlight" type="object" states="draft"/>
+						<button name="button_close" string="Close" class="oe_highlight" type="object" states="active"/>
+						<button name="button_reset" string="Reset" type="object" states="close" groups="sales_eligibility.group_reporting_manager"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,active,close"/>
+					</header>
+					<div class="oe_title">
+						<h1>
+							<field name="name" attrs="{'readonly':[('state','!=','draft')]}"/>
+						</h1>
+					</div>
+					<group>
+						<group>
+							<field name="report_type" string="Report Type" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="month" attrs="{'readonly':[('state','!=','draft')],'invisible':[('report_type','!=','monthly')]}"/>
+							<label for="start_date" string="Period" />
+							<div class="o_row">
+								<field name="start_date" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/> - <field name="end_date" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</div>
+						</group>
+						<group>
+						</group>
+					</group>
+					<field name="report_lines" attrs="{'readonly':[('state','!=','draft')]}">
+						<tree editable="bottom">
+							<field name="report_line_ids" invisible="1"/>
+							<field name="serial_no" string="S.No" />
+							<field name="employee_no" string="Emp No"/>
+							<field name="staff_id" string="Emp Name"/>
+							<field name="sale_officer_id" string="Sale Officer"/>
+							<field name="reporting_manager_id" string="Reporting Manager"/>
+							<field name="department_id" string="Job Title"/>
+							<field name="nationality" string="Unit"/>
+							<field name="join_date" string="DOJ"/>
+							<button name="action_target_achievement_details" type="object" icon="fa-info-circle" aria-label="Appraisal Target vs Booked Quantity" title="Appraisal Target vs Booked Quantity" />
+							<field name="average_achievement" string="Average Achievement(%)" widget="progressbar"/>
+							<field name="attendance_status" string="Attendance"/>
+							<field name="warning_status" string="Warning"/>
+							<field name="task_handling" string="Special Task Handling"/>
+							<field name="effort_grading" string="Effort(0-10)" readonly="1"/>
+							<field name="comments" string="Overall Comments" />
+							<field name="overall_rating" string="Overall Rating(1-5)" />
+						</tree>
+					</field>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="sale_appraisal_report_tree_view">
+			<field name="name">Appraisal Report</field>
+			<field name="model">sale.target.appraisal</field>
+			<field name="arch" type="xml">
+				<tree string="Appraisal Report">
+					<field name="name"/>
+					<field name="start_date"/>
+					<field name="end_date"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="appraisal_report_action" model="ir.actions.act_window">
+			<field name="name">Appraisal Report</field>
+			<field name="res_model">sale.target.appraisal</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Appraisal Report" id="appraisal_report_menu" parent="sale.menu_sale_report" action="appraisal_report_action" sequence="50"/>
+
+	</data>
+</odoo>

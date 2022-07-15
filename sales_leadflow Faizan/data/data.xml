@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="campaign_1" model="lead.campaign">
+            <field name="name">Visit</field>
+        </record>
+        <record id="campaign_2" model="lead.campaign">
+            <field name="name">Call</field>
+        </record>
+        <record id="campaign_3" model="lead.campaign">
+            <field name="name">QVC Leads</field>
+        </record>
+        <record id="campaign_4" model="lead.campaign">
+            <field name="name">NTQ Leads</field>
+        </record>
+        <record id="campaign_5" model="lead.campaign">
+            <field name="name">CB@W</field>
+        </record>
+        <record id="campaign_6" model="lead.campaign">
+            <field name="name">NCB@W</field>
+        </record>
+        <record id="activity_1" model="do.activity">
+            <field name="name">Meeting</field>
+        </record>
+        <record id="activity_2" model="do.activity">
+            <field name="name">Call</field>
+        </record>
+        <record id="activity_3" model="do.activity">
+            <field name="name">Visit</field>
+        </record>
+    </data>
+</odoo>
