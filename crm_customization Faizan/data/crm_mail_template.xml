@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <!-- Mail template are declared in a NOUPDATE block so users can freely customize/delete them -->
+    <data>
+        <!--Email PR Reject -->
+
+        <record id="email_template_contact_client" model="mail.template">
+            <field name="name">CRM: Contact Client</field>
+            <field name="model_id" ref="crm_customization.model_crm_lead"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">odoomsg@gmail.com</field>
+            <field name="subject">CRM Lead  (Ref ${object.name or 'n/a' })</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear Approver
+                        <br/><br/>
+                        Here is a purchase request <strong><a target="_blank" href="${object.obj_url}">${object.name}</a></strong>
+                        created on <strong>${object.create_date}</strong> will be expected to close <strong>${object.date_deadline}</strong>, kindly contact to client.
+                        <br/>
+                        Best regards,
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!--Email Operation -->
+
+        <record id="email_template_operation_send" model="mail.template">
+            <field name="name">Reject Purchase Order: Send PO</field>
+            <field name="model_id" ref="crm_customization.model_operation_request"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">odoomsg@gmail.com</field>
+            <field name="subject">Operation Request (Ref ${object.name or 'n/a' })</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear Production Team,
+                        <br/><br/>
+                        Here is a service request <strong><a target="_blank" href="${object.obj_url}">${object.name}</a></strong>
+                        kindly follow up with it.
+                        <br/>
+                        Best regards,
+                    </p>
+                </div>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

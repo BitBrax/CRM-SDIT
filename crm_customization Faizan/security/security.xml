@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Security group -->
+
+        <record id="group_production_responsible" model="res.groups">
+            <field name="name">Production Responsible</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+          <record id="category_crm_rights" model="ir.module.category">
+            <field name="name">CRM Rights</field>
+            <field name="sequence">22</field>
+        </record>
+
+        <record id="group_team_leader" model="res.groups">
+            <field name="name">Sales Team Leader</field>
+            <field name="category_id" ref="category_crm_rights"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record id="group_team_manager" model="res.groups">
+            <field name="name">Sales Team Manager</field>
+            <field name="category_id" ref="category_crm_rights"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+    </data>
+</odoo>

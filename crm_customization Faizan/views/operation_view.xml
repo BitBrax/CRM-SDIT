@@ -1,0 +1,284 @@
+<odoo>
+    <data>
+
+        <!--Reject wizard-->
+
+        <record id="view_crm_reject_wiz" model="ir.ui.view">
+            <field name="name">request.view.reject</field>
+            <field name="model">request.reject</field>
+            <field name="arch" type="xml">
+                <form string="Reject Reason">
+                    <field name="reason_for_rejection" />
+                    <footer>
+                        <button name="submit_reason" type="object" string="Submit"
+                                class="oe_highlight" />
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for rejection of -->
+
+        <record id="action_reject_crm_lead"
+                model="ir.actions.act_window">
+            <field name="name">Reject Reason</field>
+            <field name="res_model">request.reject</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <!--Report wizard-->
+        <record id="crm_operation_view_form" model="ir.ui.view">
+            <field name="name">crm.lead.form.custom</field>
+            <field name="model">sale.order</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="10" />
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="button_submit" type="object" string="Checked" class="oe_highlight" attrs="{'invisible':[('state','!=','draft')]}"/>
+                        <button name="button_reviewed" type="object" string="Review" class="oe_highlight" attrs="{'invisible':[('state','!=','submitted')]}"/>
+                        <button name="button_returned" type="object" string="Return" class="oe_highlight" attrs="{'invisible':[('state','!=','reviewed')]}"/>
+                        <button name="button_approved" type="object" string="Approve" class="oe_highlight" attrs="{'invisible':[('state','!=','reviewed')]}"/>
+                        <button name="%(action_reject_crm_lead)d" type="action" string="Reject" attrs="{'invisible':[('state','!=','reviewed')]}" />
+                        <button name="button_cpv_failed" type="object" string="CPV Failed" class="oe_highlight" attrs="{'invisible':[('state','!=','sale')]}"/>
+                        <button name="button_cpv_pending" type="object" string="CPV Pending" class="oe_highlight" attrs="{'invisible':[('state','!=','sale')]}"/>
+                        <button name="button_proceed_production" type="object" string="Proceed to Production" class="oe_highlight" attrs="{'invisible':[('state','!=','sale')]}"/>
+                        <button name="button_delivered" type="object" string="Delivered" class="oe_highlight" attrs="{'invisible':[('state','!=','sent_for_prod')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted,reviewed,sale,returned,rejected,cpv_failed,cpv_pending,sent_for_prod,delivered,pending"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2" col="2">
+                            <group>
+                                <h1 class="mt0">
+                                    <field name="partner_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="company_id" invisible="1"/>
+                                </h1>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <group colspan="2" col="2">
+                            <group>
+                                <field name="service_type_id" options="{&quot;no_create&quot;: True}" string="Service Type" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('state','=','submitted')]}"/>
+                                <field name="base_no" string="Base Number" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('state','=','submitted')]}"/>
+                                <field name="base_account_no" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('state','=','submitted')]}" string="Account No"/>
+                                <field name="currency_id" options="{&quot;no_create&quot;: True}" string="Currency" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('state','=','submitted')]}" />
+                                <field name="is_rejected" invisible="1" />
+                                <field name="reject_reason" attrs="{'invisible':[('is_rejected','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="pick_location_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" string="Pick up Location" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('state','=','submitted')]}" />
+                                <field name="card_type" string="Card Type" attrs="{'readonly':[('state','not in',['draft','submitted'])]}" />
+                                <field name="prepayment_percentage" string="Prepayment Percent" attrs="{'readonly':[('state','not in',['draft','submitted'])]}" />
+                                <field name="percent" string="Percentage" attrs="{'readonly':[('state','not in',['draft','submitted'])],'required':[('prepayment_percentage','=','other')],'invisible':[('prepayment_percentage','!=','other')]}" />
+                                <field name="reviewed_by_tl" string="Reviewed by Team Leader" attrs="{'readonly':[('state','not in',['draft','submitted','reviewed'])],'required':[('state','=','reviewed')]}"/>
+                                <field name="reviewed_by_sm" string="Reviewed by Sales Manager" attrs="{'readonly':[('state','not in',['draft','submitted','reviewed'])],'required':[('state','=','reviewed')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Service" name="order_lines">
+                                <field name="order_line" widget="section_and_note_one2many" attrs="{'readonly':[('state','not in',['draft','submitted'])]}">
+                                    <tree string="Service Lines" editable="bottom">
+                                        <control>
+                                            <create name="add_product_control" string="Add a Service"/>
+                                            <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                            <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                        </control>
+
+                                        <field name="sequence" widget="handle"/>
+                                        <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
+                                        <field name="display_type" invisible="1"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="product_updatable" invisible="1"/>
+                                        <field name="product_id" attrs="{'readonly': [('product_updatable', '=', False)],'required': [('display_type', '=', False)],}" options="{'no_open': True}" force_save="1" widget="product_configurator"/>
+                                        <field name="product_template_id" string="Product" invisible="1" attrs="{'readonly': [('product_updatable', '=', False)],'required': [('display_type', '=', False)],}" options="{'no_open': True}" />
+                                        <field name="name" widget="section_and_note_text" optional="show"/>
+                                        <field name="analytic_tag_ids" optional="hide" groups="analytic.group_analytic_tags" widget="many2many_tags" options="{'color_field': 'color'}" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
+                                        <field name="product_uom_qty" decoration-info="(not display_type and invoice_status == 'to invoice')" decoration-bf="(not display_type and invoice_status == 'to invoice')" />
+                                        <!--<field name="qty_delivered" decoration-info="(not display_type and invoice_status == 'to invoice')" decoration-bf="(not display_type and invoice_status == 'to invoice')" string="Delivered" />-->
+                                        <field name="qty_delivered_manual" invisible="1"/>
+                                        <field name="qty_delivered_method" invisible="1"/>
+                                        <!--<field name="qty_invoiced" decoration-info="(not display_type and invoice_status == 'to invoice')" decoration-bf="(not display_type and invoice_status == 'to invoice')" string="Invoiced" />-->
+                                        <field name="qty_to_invoice" invisible="1"/>
+                                        <field name="product_uom_readonly" invisible="1"/>
+                                        <field name="product_uom" force_save="1" string="UoM" attrs="{'readonly': [('product_uom_readonly', '=', True)],'required': [('display_type', '=', False)],}" groups="uom.group_uom" options="{&quot;no_open&quot;: True}" optional="show"/>
+                                        <field name="price_unit" />
+                                        <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]" optional="show"/>
+                                        <!--<field name="discount" string="Disc.%" groups="product.group_discount_per_so_line" optional="show" widget="product_discount"/>-->
+                                        <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                        <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="invoice_status" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="price_tax" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                    </tree>
+                                </field>
+
+                            </page>
+                            <page string="Personal Information">
+                                <group string="Personal Information">
+                                    <group>
+                                        <field name="account_no" string="In Active Base Number" readonly="1"/>
+                                        <field name="applicant_name" string="Name" placeholder="Name as per Passport...." readonly="1"/>
+                                        <field name="nationality" string="Nationality" readonly="1"/>
+                                        <field name="employer_id" string="Employer" readonly="1"/>
+                                        <field name="passport_no" string="PP Number" readonly="1"/>
+                                        <field name="passport_expiry" string="Expiry Date" readonly="1"/>
+                                        <field name="birthday" string="Date of Birth" readonly="1"/>
+                                        <field name="age" readonly="1"/>
+                                        <field name="degree_level" string="Educational Status" readonly="1"/>
+                                        <field name="martial_status" string="Martial Status" readonly="1"/>
+                                        <field name="no_of_dependent" attrs="{'invisible':[('martial_status','=','single')],'required':[('martial_status','=','married')]}" readonly="1"/>
+                                        <field name="email_con" string="Email Address" readonly="1"/>
+                                        <field name="mobile_con" string="Mobile" readonly="1"/>
+                                    </group>
+                                    <group string="Work Address">
+                                        <label for="street_work" string="Work Address"/>
+                                        <div>
+                                            <div class="o_address_format" name="div_address_work">
+                                                <field name="street_work" placeholder="Street..." class="o_address_street" readonly="1"/>
+                                                <field name="street2_work" placeholder="Street 2..." class="o_address_street" readonly="1"/>
+                                                <field name="city_work" placeholder="City" class="o_address_city" readonly="1"/>
+                                                <field name="state_id_work" readonly="1" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}" />
+                                                <field name="zip_work" placeholder="ZIP" class="o_address_zip" readonly="1"/>
+                                                <field name="country_id_work" readonly="1" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" />
+                                            </div>
+                                        </div>
+                                        <field name="flat_no_work" string="Flat No" readonly="1"/>
+                                        <field name="building_work" string="Building No" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Home Address">
+                                        <label for="street_home" string="Home Address"/>
+                                        <div>
+                                            <div class="o_address_format" name="div_address_home">
+                                                <field name="street_home" placeholder="Street..." class="o_address_street" readonly="1"/>
+                                                <field name="street2_home" placeholder="Street 2..." class="o_address_street" readonly="1"/>
+                                                <field name="city_home" placeholder="City" class="o_address_city" readonly="1"/>
+                                                <field name="state_id_home" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}" readonly="1"/>
+                                                <field name="zip_home" placeholder="ZIP" class="o_address_zip" readonly="1"/>
+                                                <field name="country_id_home" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" readonly="1"/>
+                                            </div>
+                                        </div>
+                                        <field name="flat_no_home" string="Flat No" readonly="1"/>
+                                        <field name="building_home" string="Building No" readonly="1"/>
+                                    </group>
+                                    <group string="Financial Information">
+                                        <field name="is_blacklisted" string="Is Blacklisted?" readonly="1"/>
+                                        <field name="monthly_salary" string="Monthly Salary" readonly="1"/>
+                                        <field name="other_income" string="Other Income" readonly="1"/>
+                                        <field name="monthly_income" string="Monthly Income" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Documents">
+                                <group string="Documents">
+                                    <group>
+                                        <field name="passport_attachment" readonly="1" string="Passport" />
+                                    </group>
+                                    <group>
+                                        <field name="fatch_form_attachment" readonly="1" string="FATCA Form" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Travel Information">
+                                <group string="Travel Information">
+                                    <group>
+                                        <field name="dcard_number" readonly="1" string="D-Card Number" />
+                                        <field name="arrival_time" readonly="1" string="Arrival Time" />
+                                        <field name="airline_agency" readonly="1" string="Airline Agency" />
+                                        <field name="flight_reference" readonly="1" string="Flight Reference" />
+                                        <field name="departure_city" readonly="1" string="Departure City" />
+                                        <field name="arrival_city" readonly="1" string="Arrival City" />
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Signed Documents">
+                                <group string="Sale Agent Information">
+                                    <group>
+                                        <field name="sales_agent" readonly="1"/>
+                                        <field name="sales_agent_id" readonly="1" />
+                                        <field name="sales_officer" readonly="1" />
+                                        <field name="sales_department" readonly="1" />
+                                        <field name="sales_deadline" readonly="1" />
+                                    </group>
+                                    <group string="Signed Documents">
+                                        <field name="digital_signature_attach" readonly="1"/>
+                                        <field name="account_op_form" readonly="1"/>
+                                        <field name="dcard_form" readonly="1"/>
+                                        <field name="undertaking_form" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="crm_operation_view_tree" model="ir.ui.view">
+            <field name="name">crm.operation.tree.custom</field>
+            <field name="model">sale.order</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="10" />
+            <field name="arch" type="xml">
+                <tree string="Application" decoration-info="state in ['draft','reviewed']" decoration-danger="state in ['rejected','cpv_failed']" decoration-success="state == 'approved'" edit="false" delete="false">
+                    <field name="partner_id" />
+                    <field name="email_con" />
+                    <field name="mobile_con" />
+                    <field name="nationality" />
+                    <field name="employer_id" />
+                    <field name="service_type_id" />
+                    <field name="sales_agent" />
+                    <field name="sales_officer" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action For CRM Operation Views -->
+        <record id="action_crm_general" model="ir.actions.act_window">
+            <field name="name">Service Application</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', '!=', 'sale')]</field>
+        </record>
+
+        <!--Action For Tree-->
+        <record id="action_crm_application_tree_view" model="ir.actions.act_window.view">
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="crm_customization.crm_operation_view_tree"/>
+            <field name="act_window_id" ref="crm_customization.action_crm_general"/>
+        </record>
+
+        <!--Action For Form-->
+        <record id="action_crm_application_form_view" model="ir.actions.act_window.view">
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="crm_customization.crm_operation_view_form"/>
+            <field name="act_window_id" ref="crm_customization.action_crm_general"/>
+        </record>
+
+
+        <!-- Operation CRM Menu-->
+        <menuitem id="menu_crm_operation" name="Operations"
+                  web_icon="crm_customization,static/description/icon.png"
+                  action="crm_customization.action_crm_general"/>
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel','submitted','reviewed','returned','rejected'))]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="service_type_view" model="service.type">
+            <field name="serial_no">1</field>
+            <field name="name">Account</field>
+        </record>
+         <record id="card_type_rec1" model="type.card">
+            <field name="serial_no">1</field>
+            <field name="name">Credit Card</field>
+        </record>
+         <record id="card_type_rec2" model="type.card">
+            <field name="serial_no">2</field>
+            <field name="name">Cash Card</field>
+        </record>
+    </data>
+</odoo>

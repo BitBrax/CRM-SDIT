@@ -1,0 +1,82 @@
+<odoo>
+    <data>
+
+        <report
+                id="action_report_ecard_wallet"
+                model="crm.lead"
+                string="Digital Signature Form"
+                report_type="qweb-pdf"
+                name="crm_customization.report_ecard_form"
+                file="crm_customization.report_ecard_form" />
+         <report
+                id="action_report_consumer_loan"
+                model="crm.lead"
+                string="Account Opening Form"
+                report_type="qweb-pdf"
+                name="crm_customization.report_consumer_loan"
+                file="crm_customization.report_consumer_loan" />
+
+         <report
+                id="action_report_vehicle_rent"
+                model="crm.lead"
+                string="Digital Card Form"
+                report_type="qweb-pdf"
+                name="crm_customization.report_vehicle_rent"
+                file="crm_customization.report_vehicle_rent" />
+
+         <report
+                id="action_report_insurance"
+                model="crm.lead"
+                string="Undertaking Letter"
+                report_type="qweb-pdf"
+                name="crm_customization.report_insurance_form"
+                file="crm_customization.report_insurance_form" />
+
+
+        <template id="report_ecard_form">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span>This is Demo Report for E Card which will Customize on Request..</span>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+         <template id="report_consumer_loan">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span>This is Demo Report for Consumer Loan which will Customize on Request..</span>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+         <template id="report_vehicle_rent">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span>This is Demo Report for Vehicle Rent which will Customize on Request..</span>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+         <template id="report_insurance_form">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span>This is Demo Report for insurance which will Customize on Request..</span>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

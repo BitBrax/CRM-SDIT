@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+view_request_reject,request.reject,model_request_reject,base.group_user,1,1,1,1
+view_service_type,service.type,model_service_type,base.group_user,1,1,1,1
+view_pickup_location,pickup.location,model_pickup_location,base.group_user,1,1,1,1
+view_type_card,type.card,model_type_card,base.group_user,1,1,1,1
+view_arrival_status,arrival.status,model_arrival_status,base.group_user,1,1,1,1
+

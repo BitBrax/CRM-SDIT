@@ -1,0 +1,448 @@
+<odoo>
+    <data>
+        <!-- <record model="ir.ui.view" id="view_partner_form_etir">
+             <field name="name">tax.invoice.res.partner.inherit</field>
+             <field name="model">res.partner</field>
+             <field name="inherit_id" ref="base.view_partner_form"/>
+             <field name="arch" type="xml">
+                 <xpath expr="//field[@name='vat']" position="after">
+                     <field name="building_no"/>
+                     <field name="additional_no"/>
+                     <field name="other_seller_id"/>
+                 </xpath>
+             </field>
+         </record>-->
+        <record model="ir.ui.view" id="employee_view_inherit_sit">
+            <field name="name">employee.view.crm</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="employee_number" />
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="supervisor"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="crm_custom_view_stage_tree">
+            <field name="name">crm.view.inherit.tree</field>
+            <field name="model">crm.stage</field>
+            <field name="inherit_id" ref="crm.crm_stage_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_won']" position="after">
+                    <field name="is_accepted" string="With QVC Team"/>
+                    <field name="is_reviewed" string="Pending Contact"/>
+                    <field name="is_allocate" string="Meeting Schedule"/>
+                    <field name="is_card" string='Submitted Lead'/>
+                    <field name="is_rejected"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="crm_custom_view_stage_form">
+            <field name="name">crm.view.inherit.form.stage</field>
+            <field name="model">crm.stage</field>
+            <field name="inherit_id" ref="crm.crm_stage_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_won']" position="after">
+                    <field name="is_accepted" string="With QVC Team"/>
+                    <field name="is_reviewed" string="Pending Contact"/>
+                    <field name="is_allocate" string="Meeting Schedule"/>
+                    <field name="is_card" string='Submitted Lead'/>
+                    <field name="is_rejected"/>
+                </xpath>
+            </field>
+        </record>
+         <!-- <record model="ir.ui.view" id="crm_custom_view_stage_form_sale">
+              <field name="name">crm.view.inherit.form.sale</field>
+              <field name="model">crm.lead</field>
+              <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+              <field name="arch" type="xml">
+                  <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                      <attribute name="invisible">1</attribute>
+                  </xpath>
+              </field>
+          </record>
+-->
+        <record model="ir.ui.view" id="crm_custom_view">
+            <field name="name">crm.view.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//div[@name='button_box']" position="after">
+                     <button name="proceed_request" string="Proceed" type="object" class="oe_highlight" attrs="{'invisible': [('is_accepted','=',True)]}"/>
+                     <button name="proceed_with_qvc" string="Proceed" type="object" class="oe_highlight" attrs="{'invisible': ['|',('has_info','=',False),('is_reviewed','=',True)]}"/>
+                     <button name="proceed_allocation" string="Proceed" type="object" class="oe_highlight" attrs="{'invisible': ['|',('has_docs','=',False),('is_allocated','=',True)]}"/>
+                     <button name="proceed_lead_submit" string="Proceed" type="object" class="oe_highlight" attrs="{'invisible': ['|',('is_allocated','=',False),('is_sa_info','=',True)]}"/>
+                     <!--<button name="action_open_contact" type="object" string="Contact" class="oe_stat_button" icon="fa-address-book" attrs="{'invisible': [('has_client','=',False)]}"/>
+                     <button name="action_open_request" type="object" string="Application" class="oe_stat_button" icon="fa-navicon" attrs="{'invisible': [('has_client','=',False)]}"/>
+-->                 </xpath>
+                <xpath expr="//header" position="inside">
+                    <!--<button name="submit_operation" string="Submit to Review" class="oe_highlight" type="object" attrs="{'invisible': [('has_client','=',False)]}" groups="crm_customization.group_team_manager"/>-->
+                     <button name="button_lock" string="Lock" class="oe_highlight" type="object" attrs="{'invisible': [('unlocked','=',False)]}" groups="crm_customization.group_team_manager"/>
+                     <button name="button_unlock" string="Unlock" class="oe_highlight" type="object" attrs="{'invisible': [('is_accepted','=',False)]}" groups="crm_customization.group_team_manager"/>
+                </xpath>
+                <xpath expr="//button[@name='action_set_won_rainbowman']" position="attributes">
+                    <attribute name="groups">crm_customization.group_team_leader</attribute>
+                </xpath>
+                <xpath expr="//div[2]" position="after">
+                    <label for="campaign_ids" string="Campaign"/>
+                    <div>
+                        <field name="campaign_ids" class="oe_inline" widget="many2many_tags" required="1"/>
+                    </div>
+
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">PP Client name</attribute>
+                </xpath>
+                <xpath expr="//group[@name='lead_priority']" position="after">
+                    <group name="sa_info" attrs="{'invisible':[('has_docs','=',False)]}">
+                        <group string="Sales Officer">
+                            <field name="sales_officer_id" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}" options="{&quot;no_create&quot;: True}" string="Sales Officer" />
+                            <field name="sales_officer_emp_no" options="{&quot;no_create&quot;: True}" string="SO ID" />
+                            <field name="sales_officer_department" options="{&quot;no_create&quot;: True}" string="SO Department" />
+                        </group>
+                        <group string="Sales Agent">
+                            <field name="sales_agent" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}" options="{&quot;no_create&quot;: True}" string="Sales Agent"/>
+                            <field name="sales_agent_id" string="Agent ID" />
+                            <field name="sales_department" options="{&quot;no_create&quot;: True}" string="SA Department" />
+                            <field name="sales_deadline" string="Deadline" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_allocated','=',True)]}"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="qvc_staff" attrs="{'required':[('is_accepted','=',True)]}"/>
+                    <field name="arrival_status" attrs="{'invisible':[('has_info','=',False)],'required':[('is_accepted','=',True)]}" widget="radio" />
+                    <field name="sales_manager_id" attrs="{'invisible':[('arrival_status','=','no')],'required':[('arrival_status','=','yes')]}"/>
+                    <field name="arrival_status_tag" attrs="{'invisible':[('has_info','=',False)],'required':[('is_accepted','=',True)]}" widget="many2many_tags" />
+                    <field name="is_reviewed" invisible="1"/>
+                    <field name="is_service_request" invisible="1"/>
+                    <field name="is_allocated" invisible="1"/>
+                    <field name="is_accepted" invisible="1"/>
+                    <field name="has_info" invisible="1"/>
+                    <field name="has_docs" invisible="1"/>
+                    <field name="has_travel_info" invisible="1" />
+                    <field name="is_rejected" invisible="1"/>
+                    <field name="has_sa" invisible="1"/>
+                    <field name="has_client" invisible="1"/>
+                    <field name="has_application" invisible="1" />
+                    <field name="is_sa_info" invisible="1" />
+                    <field name="unlocked" invisible="1" />
+                    <field name="amount_limit" string="Limit" attrs="{'required':[('has_sa','=',True)],'invisible':[('is_sa_info','=',False)]}"/>
+                    <field name="tenor" string="Tenor" attrs="{'required':[('has_sa','=',True)],'invisible':[('is_sa_info','=',False)]}"/>
+                    <field name="reject_reason" attrs="{'invisible':[('is_rejected','=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="attrs">{'required':[('is_reviewed','=',True)]}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='lead']" position='after'>
+                    <page string="Personal Information">
+                        <group>
+                            <group string="Personal Information">
+                                <field name="account_no" required="1" string="In Active Base Number" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="applicant_name" required="1" string="Name" placeholder="Name as per Passport...." attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="nationality" string="Nationality" required="1" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="employer_id" string="Employer" attrs="{'required':[('is_accepted','=',True)],'readonly':[('is_reviewed','=',True)]}"/>
+                                <field name="passport_no" string="PP Number" required="1" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="passport_expiry" string="Expiry Date" />
+                                <field name="birthday" string="Date of Birth" />
+                                <field name="age"/>
+                                <field name="degree_level" string="Educational Status" />
+                                <field name="martial_status" string="Martial Status" />
+                                <field name="no_of_dependent" attrs="{'invisible':[('martial_status','=','single')],'required':[('martial_status','=','married')]}" />
+                                <field name="email_con" required="1" string="Email Address" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="mobile_con" string="Phone" attrs="{'required':[('is_accepted','=',True)],'readonly':[('is_reviewed','=',True)]}"/>
+                                <field name="country_phone" string="Country Phone" attrs="{'required':[('is_accepted','=',True)],'readonly':[('is_reviewed','=',True)]}"/>
+                            </group>
+                            <group string="Work Address">
+                                <label for="street_work" string="Work Address"/>
+                                <div>
+                                    <div class="o_address_format" name="div_address_work">
+                                        <field name="street_work" placeholder="Street..." class="o_address_street" />
+                                        <field name="street2_work" placeholder="Street 2..." class="o_address_street" />
+                                        <field name="city_work" placeholder="City" class="o_address_city" />
+                                        <field name="state_id_work" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}" />
+                                        <field name="zip_work" placeholder="ZIP" class="o_address_zip" />
+                                        <field name="country_id_work" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" />
+                                    </div>
+                                </div>
+                                <field name="flat_no_work" string="Flat No" />
+                                <field name="building_work" string="Building No" />
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Home Address">
+                                <label for="street_home" string="Home Address"/>
+                                <div>
+                                    <div class="o_address_format" name="div_address_home">
+                                        <field name="street_home" placeholder="Street..." class="o_address_street" />
+                                        <field name="street2_home" placeholder="Street 2..." class="o_address_street" />
+                                        <field name="city_home" placeholder="City" class="o_address_city" />
+                                        <field name="state_id_home" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
+                                        <field name="zip_home" placeholder="ZIP" class="o_address_zip" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                        <field name="country_id_home" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" />
+                                    </div>
+                                </div>
+                                <field name="flat_no_home" string="Flat No" />
+                                <field name="building_home" string="Building No" />
+                            </group>
+                            <group string="Financial Information">
+                                <field name="is_blacklisted" string="Is Blacklisted?"/>
+                                <field name="monthly_salary" string="Monthly Salary" required="1" attrs="{'readonly':[('is_accepted','=',True)]}"/>
+                                <field name="other_income" string="Other Income" />
+                                <field name="monthly_income" string="Monthly Income" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <h3 style="border: 1px #a24689 solid;border-radius: 5px;padding: 10px;">
+                                <br/>
+                                <strong>This is to confirm, I accept to apply for an account, the credit card with your company, and above information correct and accurate.</strong><br/><br/>
+                            </h3>
+                            <h2>
+                                <strong>Digital Signature:</strong><br/>
+                            </h2>
+                        </group>
+                        <!--<button name="proceed_request" string="Proceed" type="object" class="oe_highlight" />-->
+                    </page>
+                    <page string="Travel Information" attrs="{'invisible':[('has_info','=',False)]}">
+                        <group string="Travel Information">
+                            <group>
+                                <field name="dcard_number" string="D-Card Number" />
+                                <field name="arrival_time" attrs="{'readonly':[('is_reviewed','=',True)]}" string="Arrival Date" />
+                                <field name="airline_agency" attrs="{'readonly':[('is_reviewed','=',True)]}" string="Airline Agency" />
+                                <field name="flight_reference" string="Flight Reference" />
+                                <field name="departure_city" string="Departure City" />
+                                <field name="arrival_city" string="Arrival City" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <!--<button name="proceed_with_qvc" string="Proceed" type="object" class="oe_highlight" />-->
+                    </page>
+                    <page string="Other Info and Attachments" attrs="{'invisible':[('has_docs','=',False)]}">
+                        <!--<group>
+                            <group string="Sales Officer Information">
+                                <field name="sales_officer_id" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}" options="{&quot;no_create&quot;: True}" string="Sales Officer" />
+                                <field name="sales_officer_emp_no" options="{&quot;no_create&quot;: True}" string="SO ID" />
+                                <field name="sales_officer_department" options="{&quot;no_create&quot;: True}" string="SO Department" />
+                            </group>
+                            <group string="Sales Agent Information">
+                                <field name="sales_agent" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}" options="{&quot;no_create&quot;: True}" string="Sales Agent"/>
+                                <field name="sales_agent_id" string="Agent ID" />
+                                <field name="sales_department" options="{&quot;no_create&quot;: True}" string="SA Department" />
+                                <field name="sales_deadline" string="Deadline" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_allocated','=',True)]}"/>
+                            </group>
+                        </group>-->
+                        <group>
+                            <group string="Other Info and Attachments">
+                                <field name="contacting_date" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}"/>
+                                <field name="request_card" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}"/>
+                                <field name="passport_attachment" string="Passport Entry Stamp" attrs="{'required':[('is_reviewed','=',True)],'readonly':[('is_allocated','=',True)]}"/>
+                                <field name="salary_attachment" string="Salary Certificate" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                <field name="qid_attachment" string="QID" />
+                                <field name="offer_letter_attachment" string="Offer Letter" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                            </group>
+                            <group string="National Address">
+                                <label for="street_home_na" string="National Address" />
+                                <div>
+                                    <div class="o_address_format" name="div_address_home">
+                                        <field name="street_home_na" placeholder="Street..." class="o_address_street" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                        <field name="street2_home_na" placeholder="Street 2..." class="o_address_street" attrs="{'readonly':[('is_sa_info','=',True)]}"/>
+                                        <field name="city_home_na" placeholder="City" class="o_address_city" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                        <field name="state_id_home_na" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                        <field name="zip_home_na" placeholder="ZIP" class="o_address_zip" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                        <field name="country_id_home_na" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                    </div>
+                                </div>
+                                <field name="flat_no_home_na" string="Flat No" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                                <field name="building_home_na" string="Building No" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}"/>
+                            </group>
+                        </group>
+                        <!--<button name="proceed_allocation" string="Proceed" type="object" class="oe_highlight" />-->
+                    </page>
+                    <page string="Meeting Status" attrs="{'invisible':[('is_allocated','=',False)]}">
+                        <group string="Meeting Status">
+                            <group>
+                                <field name="meeting_date" string="Meeting Date" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}" />
+                                <field name="passport_copy" string="Passport Copy" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}" />
+                                <field name="is_card_deliver" string="Card Deliver?" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}" />
+                                <field name="is_glass_sign" string="Glass Signature" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}" />
+                                <field name="lead_submission_date" string="Submission Date" attrs="{'required':[('is_allocated','=',True)],'readonly':[('is_sa_info','=',True)]}" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <!--<button name="proceed_lead_submit" string="Proceed" type="object" class="oe_highlight" />-->
+                    </page>
+
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Service type view -->
+
+        <record id="service_type_form_view" model="ir.ui.view">
+            <field name="name">service_type_form_view</field>
+            <field name="model">service.type</field>
+            <field name="arch" type="xml">
+                <form string="Service Type">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="serial_no"/>
+                            </group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="service_type_tree_view" model="ir.ui.view">
+            <field name="name">type.service.tree.view</field>
+            <field name="model">service.type</field>
+            <field name="arch" type="xml">
+                <tree string="Service Type">
+                    <field name="serial_no"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="service_type_action" model="ir.actions.act_window">
+            <field name="name">Service Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">service.type</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_service_type" name="Service Type" action="service_type_action" parent="crm.crm_menu_config" sequence="25"/>
+
+        <!-- Pickup Location view -->
+
+        <record id="pickup_location_form_view" model="ir.ui.view">
+            <field name="name">pickup_form_view</field>
+            <field name="model">pickup.location</field>
+            <field name="arch" type="xml">
+                <form string="Pickup Locations">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="city"/>
+                                <field name="country_id"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="pickup_location_tree_view" model="ir.ui.view">
+            <field name="name">pickup.location.tree.view</field>
+            <field name="model">pickup.location</field>
+            <field name="arch" type="xml">
+                <tree string="Pickup Location">
+                    <field name="name"/>
+                    <field name="city"/>
+                    <field name="country_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pickup_location_action" model="ir.actions.act_window">
+            <field name="name">Pickup Location</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pickup.location</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_pickup_location" name="Pickup Location" action="pickup_location_action" parent="crm.crm_menu_config" sequence="30"/>
+
+        <!-- Card Type view -->
+
+        <record id="card_type_form_view" model="ir.ui.view">
+            <field name="name">card_form_view</field>
+            <field name="model">type.card</field>
+            <field name="arch" type="xml">
+                <form string="Card Type">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="serial_no"/>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="card_type_tree_view" model="ir.ui.view">
+            <field name="name">card.tree.view</field>
+            <field name="model">type.card</field>
+            <field name="arch" type="xml">
+                <tree string="Card Location">
+                    <field name="serial_no"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="card_type_action" model="ir.actions.act_window">
+            <field name="name">Card Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">type.card</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_card_type_location" name="Card Type" action="pickup_location_action" parent="crm.crm_menu_config" sequence="35"/>
+
+        <!-- Card Type view -->
+
+        <record id="arrival_status_form_view" model="ir.ui.view">
+            <field name="name">status_arrival_form_view</field>
+            <field name="model">arrival.status</field>
+            <field name="arch" type="xml">
+                <form string="Arrival Status">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="arrival_status_tree_view" model="ir.ui.view">
+            <field name="name">status.status.tree.view</field>
+            <field name="model">arrival.status</field>
+            <field name="arch" type="xml">
+                <tree string="Arrival Status">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="arrival_status_action" model="ir.actions.act_window">
+            <field name="name">Arrival Status</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">arrival.status</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_arrival_status" name="Arrival Status" action="arrival_status_action" parent="crm.crm_menu_config" sequence="40"/>
+
+    </data>
+</odoo>
+
+
+
